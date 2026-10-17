@@ -1,0 +1,134 @@
+<!doctype html>
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<meta name="theme-color" content="#171411">
+	<title>Countdown to Halloween</title>
+	<style>
+		:root {
+			color-scheme: dark;
+			font-family: Georgia, "Times New Roman", serif;
+			background: #171411;
+			color: #fff5e9;
+		}
+
+		* { box-sizing: border-box; }
+
+		body {
+			min-height: 100vh;
+			margin: 0;
+			display: grid;
+			place-items: center;
+			padding: 24px;
+			background-image: radial-gradient(#fff5e90b 1px, transparent 1px);
+			background-size: 18px 18px;
+		}
+
+		main {
+			width: min(100%, 760px);
+			text-align: center;
+			padding: 48px 24px;
+		}
+
+		.eyebrow {
+			margin: 0 0 14px;
+			color: #f38b35;
+			font: 700 0.8rem/1.4 system-ui, sans-serif;
+			letter-spacing: 0.16em;
+			text-transform: uppercase;
+		}
+
+		h1 {
+			margin: 0;
+			font-size: 5rem;
+			font-weight: 500;
+			line-height: 1.05;
+		}
+
+		.date {
+			margin: 16px 0 38px;
+			color: #c9b9a8;
+			font: 1rem/1.5 system-ui, sans-serif;
+		}
+
+		.countdown {
+			display: grid;
+			grid-template-columns: repeat(4, minmax(0, 1fr));
+			gap: 12px;
+			max-width: 620px;
+			margin: 0 auto;
+		}
+
+		.unit { min-width: 0; }
+
+		.value {
+			display: block;
+			color: #f38b35;
+			font: 500 5rem/1 system-ui, sans-serif;
+			font-variant-numeric: tabular-nums;
+		}
+
+		.label {
+			display: block;
+			margin-top: 10px;
+			color: #c9b9a8;
+			font: 700 0.7rem/1.4 system-ui, sans-serif;
+			text-transform: uppercase;
+		}
+
+		@media (max-width: 540px) {
+			h1, .value { font-size: 2.5rem; }
+			.countdown { gap: 4px; }
+			.label { font-size: 0.62rem; }
+		}
+	</style>
+</head>
+<body>
+	<main>
+		<p class="eyebrow">The nights are getting longer</p>
+		<h1 id="heading">Countdown to Halloween</h1>
+		<p class="date" id="date"></p>
+		<div class="countdown" id="countdown" role="timer" aria-labelledby="heading">
+			<div class="unit"><span class="value" id="days">0</span><span class="label">Days</span></div>
+			<div class="unit"><span class="value" id="hours">00</span><span class="label">Hours</span></div>
+			<div class="unit"><span class="value" id="minutes">00</span><span class="label">Minutes</span></div>
+			<div class="unit"><span class="value" id="seconds">00</span><span class="label">Seconds</span></div>
+		</div>
+	</main>
+	<script>
+		const dateLabel = document.querySelector('#date');
+		const countdown = document.querySelector('#countdown');
+		const fields = {
+			days: document.querySelector('#days'),
+			hours: document.querySelector('#hours'),
+			minutes: document.querySelector('#minutes'),
+			seconds: document.querySelector('#seconds')
+		};
+
+		function updateCountdown() {
+			const now = new Date();
+			let halloween = new Date(now.getFullYear(), 9, 31);
+			if (now >= halloween) halloween = new Date(now.getFullYear() + 1, 9, 31);
+
+			dateLabel.textContent = halloween.toLocaleDateString(undefined, {
+				month: 'long', day: 'numeric', year: 'numeric'
+			});
+
+			const remaining = Math.max(0, Math.floor((halloween - now) / 1000));
+			fields.days.textContent = Math.floor(remaining / 86400);
+			fields.hours.textContent = String(Math.floor((remaining % 86400) / 3600)).padStart(2, '0');
+			fields.minutes.textContent = String(Math.floor((remaining % 3600) / 60)).padStart(2, '0');
+			fields.seconds.textContent = String(remaining % 60).padStart(2, '0');
+
+			if (remaining === 0) {
+				countdown.hidden = true;
+				dateLabel.textContent = "It's Halloween!";
+			}
+		}
+
+		updateCountdown();
+		setInterval(updateCountdown, 1000);
+	</script>
+</body>
+</html>
